@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>User Dashboard</title>
+    <style>
+        /* General Styles */
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background-color: #FFE4C4;
+            color: #333;
+        }
+
+        header {
+            background-color: #4caf50;
+            color: white;
+            text-align: center;
+            padding: 1rem 0;
+            font-size: 42px;
+            font-weight: bold;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        h2, p {
+            color: green;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            font-style: oblique;
+            font-weight: 400;
+            font-size: xx-large;
+        }
+
+        .dashboard-container {
+            max-width: 1200px;
+            margin: 20px auto;
+            padding: 1.5rem;
+            text-align: center;
+            background-color: #FFE4C4;
+        }
+
+        .dashboard-buttons {
+            display: grid; /* Use grid layout */
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); /* Responsive grid */
+            gap: 30px; /* Consistent spacing between items */
+            margin-top: 50px;
+            justify-items: center; /* Center items in grid */
+}
+
+        .dashboard-section {
+            background-color: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Subtle shadow */
+            text-align: center;
+            width: 100%;
+            max-width: 300px;
+            min-height: 300px; /* Ensure all cards have equal height */
+            display: flex; /* Flexbox for better alignment */
+            flex-direction: column;
+            justify-content: space-between; /* Distribute content evenly */
+  
+        }
+
+        .dashboard-button {
+            background-color: #4caf50;
+            color: white;
+            padding: 10px 20px;
+            text-align: center;
+            font-size: 18px;
+            font-weight: bold;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            display: inline-block;
+            margin-top: auto;
+
+        }
+
+        .dashboard-button:hover {
+            background-color: #45a049;
+            transform: translateY(-3px);
+        }
+
+        .dashboard-button:active {
+            transform: translateY(2px);
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            h2, p {
+                font-size: large;
+            }
+
+            .dashboard-container {
+                padding: 1rem;
+            }
+        }
+    </style>
+</head>
+<body>
+
+<header>
+    Welcome to Your Dashboard
+</header>
+
+<div class="dashboard-container">
+    <h2><strong>Navigate to Your Activities</strong></h2>
+    <p>Hi there! 👋 Welcome to your personalized dashboard. <br> Choose an activity below to get started and make the most of your day!</p>
+    
+    <div class="dashboard-buttons">
+        <div class="dashboard-section">
+            <p><strong>🎉 Event Details:</strong> Curious about what’s coming up? Click below to explore all the exciting events planned for you!</p>
+            <a href="{{ url_for('event_details') }}" class="dashboard-button">Event Details</a>
+        </div>
+
+        <div class="dashboard-section">
+            <p><strong>🎟️ Ticket Booking:</strong> Ready to grab your seat? Book tickets for your favorite events in just a few seconds.</p>
+            <a href="{{ url_for('ticket_booking') }}" class="dashboard-button">Ticket Booking</a>
+        </div>
+
+        <div class="dashboard-section">
+            <p><strong>🏛️ Halls:</strong> Need a venue? Check out all the available halls, their facilities, and upcoming schedules.</p>
+            <a href="{{ url_for('halls') }}" class="dashboard-button">Halls</a>
+        </div>
+
+        <div class="dashboard-section">
+            <p><strong>🔔 Notifications:</strong> Stay in the loop! Don’t miss out on important updates, alerts, and reminders. Check them out here.</p>
+            <a href="{{ url_for('notifications') }}" class="dashboard-button">Notifications</a>
+        </div>
+
+        <div class="dashboard-section">
+            <p><strong>🚪 Log Out:</strong> Done for the day? Make sure to log out securely. See you next time!</p>
+            <a href="{{ url_for('logout') }}" class="dashboard-button">Log Out</a>
+        </div>
+    </div>
+</div>
+
+</body>
+</html>
