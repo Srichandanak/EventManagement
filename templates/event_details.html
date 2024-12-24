@@ -1,0 +1,97 @@
+{% extends "base.html" %}
+
+{% block content %}
+{% with messages = get_flashed_messages(with_categories=true) %}
+  {% if messages %}
+    <div class="messages">
+      {% for category, message in messages %}
+        <div class="alert alert-{{ category }}">{{ message }}</div>
+      {% endfor %}
+    </div>
+  {% endif %}
+{% endwith %}
+<h1>Event Details</h1>
+
+<form method="POST">
+    <input type="text" name="event_name" placeholder="Event Name" required />
+    <input type="text" name="organizer_name" placeholder="Organizer Name" required />
+    <input type="text" name="address" placeholder="Address" required />
+    <textarea name="event_description" placeholder="Description"></textarea>
+    <input type="text" name="location" placeholder="Location" required />
+    
+    <label for="start_time">Start Time:</label>
+    <input type="datetime-local" name="start_time" required />
+
+    <label for="end_time">End Time:</label>
+    <input type="datetime-local" name="end_time" required />
+
+    <select name="event_type">
+      <option value="">Select Event Type</option>
+      <option value="Conference">Conference</option>
+      <option value="Workshop">Workshop</option>
+      <option value="Birth Day">Birth Day</option>
+      <option value="Wedding">Wedding</option>
+      <option value="Ceremony">Ceremony</option>
+      <option value="Party">Party</option>
+      
+    </select>
+
+    <center><button type="submit">Register Event</button></center>
+</form><br>
+
+
+<button><a href="{{ url_for('user_dashboard') }}">Back to Dashboard</a></button>
+
+
+<h2>Tailored Solutions for Every Event</h2>
+<p>No matter the size or type of event, our system is designed to meet your needs and exceed your expectations.</p>
+
+<style>
+  /* *{
+    font-size: 16px;
+  } */
+  .alert {
+    margin-bottom: 20px;
+    padding: 10px;
+    border-radius: 4px;
+  }
+  .alert-success {
+    background-color: #d4edda;
+    color: #155724;
+  }
+  .alert-error {
+    background-color: #f8d7da;
+    color: #721c24;
+  }
+
+  textarea {
+    width: 95%;
+    padding: 12px;
+    margin-bottom: 16px;
+    border-radius: 5px;
+    border: 1px solid #ccc;
+    /* font-size: 16px; */
+    padding-right: 10 px;
+  }
+
+  button {
+    background-color: #007BFF; /* Primary blue color */
+    color: white; /* White text for contrast */
+    border: none; /* Remove border */
+    border-radius: 5px; /* Rounded corners */
+    cursor: pointer; /* Pointer cursor for clickable effect */
+    font-size: 14px; /* Reasonable font size for readability */
+    padding: 10px 20px; /* Add padding for spacing */
+    text-align: center; /* Center text inside the button */
+    width: auto; /* Auto width for content-based sizing */
+    display: inline-block; /* Allows margins and proper placement */
+    transition: background-color 0.3s ease; /* Smooth color change on hover */
+  }
+
+  button:hover {
+    background-color: #0056b3; /* Darker blue on hover */
+  }
+  
+
+</style>
+{% endblock %}

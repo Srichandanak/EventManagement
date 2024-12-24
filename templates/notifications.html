@@ -1,0 +1,61 @@
+{% extends "base.html" %}
+
+{% block content %}
+<h1>Notifications</h1>
+{% with messages = get_flashed_messages() %}
+    {% if messages %}
+        <ul>
+            {% for message in messages %}
+                <li>{{ message }}</li>
+            {% endfor %}
+        </ul>
+    {% endif %}
+{% endwith %}
+<style>
+    button{
+        background-color: #007BFF; /* Primary blue color */
+        color: white; /* White text for contrast */
+        border: none; /* Remove border */
+        border-radius: 5px; /* Rounded corners */
+        cursor: pointer; /* Pointer cursor for clickable effect */
+        font-size: 14px; /* Reasonable font size for readability */
+        padding: 10px 20px; /* Add padding for spacing */
+        text-align: center; /* Center text inside the button */
+        width: auto; /* Auto width for content-based sizing */
+        display: inline-block; /* Allows margins and proper placement */
+        transition: background-color 0.3s ease; /* Smooth color change on hover */
+    }
+</style>
+
+{% if notifications %}
+    <table>
+        <thead>
+            <tr>
+                <th>Message</th>
+                <th>Event Name</th>
+                <!-- <th>Notification Type</th>
+                <th>Read</th>
+                <th>Acknowledged</th> -->
+                <th>Timestamp</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for notification in notifications %}
+            
+            <tr>
+                <td>{{ notification.message }}</td>
+                <td>{{ notification.event_name }}</td>
+                <!-- <td>{{ notification.notification_type }}</td>
+                <td>{{ 'Yes' if notification.is_read else 'No' }}</td>
+                <td>{{ 'Yes' if notification.acknowledged else 'No' }}</td> -->
+                <td>{{ notification.timestamp }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+{% else %}
+    <p>No notifications to display.</p>
+{% endif %}
+<br><br>
+<center><button type="button" onclick="window.history.back();">Back to DashBoard </button></center>
+{% endblock %}
