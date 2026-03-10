@@ -1,15 +1,15 @@
 from flask import Flask, render_template, request, flash, session, redirect, url_for
-import mysql.connector
-from mysql.connector import Error  # For Database interactions
+# import mysql.connector
+# from mysql.connector import Error  # For Database interactions
 from flask_mail import Mail, Message  # For sending Emails
 from itsdangerous import URLSafeTimedSerializer  # For secure Token Generation
 import random
 import datetime
 from flask import Flask, render_template, request, flash, redirect, url_for
-import mysql.connector
+# import mysql.connector
 import requests  # Ensure this is imported for making HTTP requests
 import uuid  # Ensure this is imported for generating UUIDs
-
+import pymysql
 
 app = Flask(__name__)
 
@@ -19,17 +19,33 @@ app.secret_key = 'sri'  # Required for session management and flashing messages
 
 
 # Database connection function
+# def create_connection():
+#     try:
+#         connection = mysql.connector.connect(
+#             host='localhost',  
+#             user='root',       
+#             password='Sri/123@',  
+#             database='event_management'  
+#         )
+#         return connection
+#     except Error as e:
+#         print(f"Error: {e}")
+#         return None
 def create_connection():
     try:
-        connection = mysql.connector.connect(
-            host='localhost',  
-            user='root',       
-            password='Sri/123@',  
-            database='event_management'  
+        connection = pymysql.connect(
+            host="mysql-3655a43e-srichandanak-573a.b.aivencloud.com",
+            port=24928,
+            user="avnadmin",
+            password="AVNS_9lVGFBMtLUz0GvojHdT",
+            db="event_management",
+            charset="utf8mb4",
+            cursorclass=pymysql.cursors.DictCursor,
+            connect_timeout=10
         )
         return connection
-    except Error as e:
-        print(f"Error: {e}")
+    except Exception as e:
+        print("Database connection error:", e)
         return None
 
 # Home Page
@@ -127,7 +143,7 @@ def login():
 
         if connection:
             try:
-                cursor = connection.cursor(dictionary=True)
+                cursor = connection.cursor()
                 # Check for valid user credentials
                 cursor.execute("SELECT * FROM users WHERE username = %s AND password = %s", (username, password))
                 user = cursor.fetchone()
@@ -168,7 +184,7 @@ def event_handling():
         events_data = [] 
 
         if connection:
-            cursor = connection.cursor(dictionary=True)
+            cursor = connection.cursor()
             cursor.execute("SELECT * FROM events") 
             events_data = cursor.fetchall()  
             
@@ -430,7 +446,7 @@ def send_notification(event_name):
     connection = create_connection()
 
     if connection:
-        cursor = connection.cursor(dictionary=True)
+        cursor = connection.cursor()
 
         try:
             # Step 1: Fetch the target username from the form
@@ -508,7 +524,7 @@ def notifications():
     connection = create_connection()
 
     try:
-        cursor = connection.cursor(dictionary=True)
+        cursor = connection.cursor()
 
         # Fetch user ID
         cursor.execute("SELECT id FROM users WHERE username = %s", (session['username'],))
@@ -700,7 +716,7 @@ def ticket_booking1():
     events = []
     if connection:
         try:
-            cursor = connection.cursor(dictionary=True)  # Use dictionary cursor
+            cursor = connection.cursor()  # Use dictionary cursor
             cursor.execute("""
                 SELECT event_name, organizer_name, location, address, event_description, start_time,  end_time, event_type FROM events where status = 'Confirmed' """)
             events = cursor.fetchall()  # This will now return a list of dictionaries
@@ -760,10 +776,6 @@ def callback():
     return "Callback received", 200
 
 
-import os
-
 if __name__ == '__main__':
-    port = int(os.environ.get("PORT", 5000))  # Use Render's assigned port
-    app.run(host="0.0.0.0", port=port, debug=True)
-
+    app.run(debug=True)
 
