@@ -1,36 +1,21 @@
 from flask import Flask, render_template, request, flash, session, redirect, url_for
-# import mysql.connector
-# from mysql.connector import Error  # For Database interactions
 from flask_mail import Mail, Message  # For sending Emails
 from itsdangerous import URLSafeTimedSerializer  # For secure Token Generation
 import random
 import datetime
-from flask import Flask, render_template, request, flash, redirect, url_for
-# import mysql.connector
 import requests  # Ensure this is imported for making HTTP requests
 import uuid  # Ensure this is imported for generating UUIDs
-import pymysql
-
+import pymysql  # For Database interactions
+import os
+import logging
 app = Flask(__name__)
 
-app.secret_key = 'sri'  # Required for session management and flashing messages
+# Required for session management and flashing messages
 # An instance of flask app is created with a secret key
 # In-memory storage for registered users (for demonstration purposes)
-
+app.secret_key = 'sri'  
 
 # Database connection function
-# def create_connection():
-#     try:
-#         connection = mysql.connector.connect(
-#             host='localhost',  
-#             user='root',       
-#             password='Sri/123@',  
-#             database='event_management'  
-#         )
-#         return connection
-#     except Error as e:
-#         print(f"Error: {e}")
-#         return None
 def create_connection():
     try:
         connection = pymysql.connect(
@@ -70,42 +55,32 @@ def register():
         city = request.form['city']
         state = request.form['state']
         role = request.form['role']  
-        
 
         connection = create_connection()
-
         if connection:
             try:
                 cursor = connection.cursor()
-                
                 # Check if username already exists
                 cursor.execute("SELECT * FROM users WHERE username = %s", (username,))
                 existing_user = cursor.fetchone()
-
                 if existing_user:
                     flash("Username already exists.", "error")
                     return redirect(url_for('register'))
-
                 # Insert the new user into the database - storing in the users table 
                 insert_query = """INSERT INTO users (username, password, mobile, dob, email, city, state, role) VALUES (%s, %s, %s, %s, %s, %s, %s, %s)"""
                 cursor.execute(insert_query, (username, password, mobile, dob, email, city, state, role))
                 connection.commit()  # Commit after inserting user
-
                 flash("Registration successful! Please log in.", "success")
-
                 # Get the newly created user ID
                 cursor.execute("SELECT id FROM users WHERE username = %s", (username,))
                 user_id = cursor.fetchone()[0]  # Get the user ID
-
                 # Insert into customers table - user_id
                 customer_query = """INSERT INTO customers (name, email, user_id) VALUES (%s, %s, %s) ON DUPLICATE KEY UPDATE user_id=%s"""
                 cursor.execute(customer_query, (username, email, user_id, user_id))
-
                 # Insert into events table - user_id
                 event_query = """INSERT INTO events (organizer_name, user_id) VALUES (%s, %s) ON DUPLICATE KEY UPDATE user_id=%s"""
                 cursor.execute(event_query, (username, user_id, user_id))
                 event_id = cursor.lastrowid
-
                 # Automatically store customer information when booking an event
                 user_email_query = """SELECT email FROM users WHERE username=%s"""
                 cursor.execute(user_email_query,(session['username'],))
@@ -137,10 +112,7 @@ def login():
         username = request.form['username']
         password = request.form['password']
 
-        
-
         connection = create_connection()
-
         if connection:
             try:
                 cursor = connection.cursor()
@@ -172,7 +144,6 @@ def login():
 
 @app.route('/user-dashboard')
 def user_dashboard():
-    
     return render_template('user_dashboard.html')
 
 @app.route('/event-handling')
@@ -182,7 +153,6 @@ def event_handling():
         connection = create_connection()
         
         events_data = [] 
-
         if connection:
             cursor = connection.cursor()
             cursor.execute("SELECT * FROM events") 
@@ -195,7 +165,6 @@ def event_handling():
     else:
         flash("You are not authorized to access this page.", "error")
         return redirect(url_for('login'))
-
 
 # Customer Management Page Route
 @app.route('/customers', methods=['GET', 'POST'])
@@ -230,17 +199,13 @@ def customers():
     
     if connection:
       try:
-          cursor=connection.cursor(dictionary=True)
+          cursor=connection.cursor(pymysql.cursors.DictCursor)
           cursor.execute("SELECT * FROM customers") 
           customers_data=cursor.fetchall() 
       finally:
           cursor.close()
           connection.close()
-
-    
     return render_template('customers.html', customers=customers_data)
-
-
 
 # Event Details Page
 @app.route('/event_details', methods=['GET', 'POST'])
@@ -350,19 +315,16 @@ def ticket_booking():
 
     return render_template('ticket_booking.html')
 
-
 # Admin Dashboard Route
 @app.route('/admin_dashboard')
 def admin_dashboard():
     return render_template('admin_dashboard.html')
     
-
-
 @app.route('/control-room')
 def controlroom():
     # Fetch customers from the database
     connection = create_connection()
-    cur = connection.cursor(dictionary=True)
+    cur = connection.cursor(pymysql.cursors.DictCursor)
     
     # Fetch all customers
     cur.execute("SELECT * FROM customers")
@@ -382,7 +344,6 @@ def controlroom():
     
     return render_template('controlroom.html', customers=customers, halls=halls)
 
-import logging
 
 @app.route('/send-reminder', methods=['POST'])
 def send_reminder():
@@ -573,7 +534,7 @@ def notifications():
 app.config['MAIL_SERVER'] = 'smtp.gmail.com'
 app.config['MAIL_PORT'] = 465
 app.config['MAIL_USERNAME'] = 'srichandanak.24@gmail.com'  
-app.config['MAIL_PASSWORD'] = 'uteu nbjt dmch lzom'      # app password generated from Google
+app.config['MAIL_PASSWORD'] = 'ehyf oswr xebx mcvk'      # app password generated from Google
 app.config['MAIL_USE_TLS'] = False
 app.config['MAIL_USE_SSL'] = True
 
@@ -597,7 +558,6 @@ def send_email():
         return "Email sent successfully!"
     except Exception as e:
         return f"Failed to send email: {str(e)}"
-
 
 # Logout Route
 @app.route('/logout')
@@ -766,19 +726,12 @@ def book_ticket():
 
     return render_template('ticket_booking1.html')
 
-    
-
 @app.route('/callback', methods=['POST'])
 def callback():
     # Handle the callback from PhonePe after payment completion
     data = request.json
     # Process the response here (e.g., verify payment status)
     return "Callback received", 200
-
-
-# if __name__ == '__main__':
-#     app.run(debug=True)
-import os
 
 if __name__ == "__main__":
     port = int(os.environ.get("PORT", 5000))
